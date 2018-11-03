@@ -25,7 +25,7 @@ namespace Authen_test.Controllers
             }
             return BadRequest("failed");
         }
-
+        [Authorize]
         [HttpGet]
         [Route("api/Authentication")]
         public IHttpActionResult Get_Authentication()

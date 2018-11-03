@@ -30,7 +30,7 @@ namespace Authen_test.Services
             }
         }
 
-        public member VerifyAccessToken(string accessToken)
+        public member VerifyAccessToken_main(string accessToken)
         {
             test_db db = new test_db();
             try
@@ -38,8 +38,21 @@ namespace Authen_test.Services
                 JWTPayload payload  = JWT.Decode<JWTPayload>(accessToken, this.secretKey);
                 if (payload == null) return null;
                 if (payload.exp < DateTime.UtcNow) return null;
-                var get_username = payload.username.Split(':');
-                var res = db.members.FirstOrDefault(e => e.mem_usename.Equals(get_username[1]));
+                var res = db.members.FirstOrDefault(e => e.mem_usename.Equals(accessToken));
+                return res;
+            }
+            catch { return null; }
+        }
+
+        public admin VerifyAccessToken_back(string accessToken)
+        {
+            test_db db = new test_db();
+            try
+            {
+                JWTPayload payload = JWT.Decode<JWTPayload>(accessToken, this.secretKey);
+                if (payload == null) return null;
+                if (payload.exp < DateTime.UtcNow) return null;
+                var res = db.admins.FirstOrDefault(e => e.ad_username.Equals(accessToken));
                 return res;
             }
             catch { return null; }
