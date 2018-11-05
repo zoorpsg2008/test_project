@@ -11,10 +11,18 @@ namespace Authen_test.Services
     public class EF_Authentication : IAuthentication
     {
         private test_db db = new test_db();
+
+        public bool Login_admin(m_Login_mem_post val)
+        {
+            var res = db.admins.FirstOrDefault(e => e.ad_username.Equals(val.username) && e.ad_password.Equals(val.password));
+            return res == null ? false : true;
+        }
+
         public bool Login_member(m_Login_mem_post val)
         {
             var res = db.members.FirstOrDefault(e => e.mem_usename.Equals(val.username) && e.mem_password.Equals(val.password));
             return res == null ? false : true ;
         }
+
     }
 }

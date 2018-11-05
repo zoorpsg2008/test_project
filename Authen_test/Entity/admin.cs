@@ -22,5 +22,7 @@ namespace Authen_test.Entity
 
         [StringLength(100)]
         public string ad_l_name { get; set; }
+
+        public string roles { get; set; }
     }
 }

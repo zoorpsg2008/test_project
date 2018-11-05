@@ -1,4 +1,5 @@
-﻿using Authen_test.Entity;
+﻿using Authen_test.App_Start;
+using Authen_test.Entity;
 using Jose;
 using System;
 using System.Collections.Generic;
@@ -30,34 +31,45 @@ namespace Authen_test.Services
             }
         }
 
-        public member VerifyAccessToken_main(string accessToken)
-        {
-            test_db db = new test_db();
+        public JWTPayload DecodeAccessToken(string accessToken) => JWT.Decode<JWTPayload>(accessToken, this.secretKey);
+        public member VerifyAccessToken_main(JWTPayload payload)
+        { 
             try
             {
-                JWTPayload payload  = JWT.Decode<JWTPayload>(accessToken, this.secretKey);
+                test_db db = new test_db();
                 if (payload == null) return null;
                 if (payload.exp < DateTime.UtcNow) return null;
-                var res = db.members.FirstOrDefault(e => e.mem_usename.Equals(accessToken));
+                var res = db.members.FirstOrDefault(e => e.mem_usename.Equals(payload.username));
                 return res;
             }
             catch { return null; }
         }
 
-        public admin VerifyAccessToken_back(string accessToken)
+        public admin VerifyAccessToken_back(JWTPayload payload)
         {
-            test_db db = new test_db();
             try
             {
-                JWTPayload payload = JWT.Decode<JWTPayload>(accessToken, this.secretKey);
+                test_db db = new test_db();
                 if (payload == null) return null;
                 if (payload.exp < DateTime.UtcNow) return null;
-                var res = db.admins.FirstOrDefault(e => e.ad_username.Equals(accessToken));
+                var res = db.admins.FirstOrDefault(e => e.ad_username.Equals(payload.username));
                 return res;
             }
             catch { return null; }
         }
 
+        public Username Username_model(string username)
+        {
+            Username model = new Username();
+            string[] data_username = username.Split(':');
+            model.type_login = data_username[0];
+            model.username = null;
+            for (int i = 0; i < data_username.Count();i++)
+            {
+                if (i != 0) model.username += data_username[i];
+            }
+            return model;
+        }
 
     }
 
@@ -74,5 +86,10 @@ namespace Authen_test.Services
     {
         Mainsystem,
         Backoffice
+    }
+    public class Username
+    {
+        public string type_login { get; set; }
+        public string username { get; set; }
     }
 }

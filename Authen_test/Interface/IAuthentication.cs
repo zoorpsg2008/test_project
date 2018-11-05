@@ -11,5 +11,6 @@ namespace Authen_test.Interface
     interface IAuthentication
     {
         bool Login_member(m_Login_mem_post val);
+        bool Login_admin(m_Login_mem_post val);
     }
 }
